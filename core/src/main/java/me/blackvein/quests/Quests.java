@@ -1103,16 +1103,17 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             getLogger().warning("Current stage was null when showing objectives for " + quest.getName());
             return;
         }
+        String message = "";
+        boolean isOverriden = false;
         if (!ignoreOverrides && !quester.getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
+            isOverriden = true;
             for (final String s: quester.getCurrentStage(quest).getObjectiveOverrides()) {
-                String message = ChatColor.GREEN + (s.trim().length() > 0 ? "- " : "") + ConfigUtil
+                message = ChatColor.GREEN + (s.trim().length() > 0 ? "- " : "") + ConfigUtil
                         .parseString(s, quest, quester.getPlayer());
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
                 }
-                quester.sendMessage(message);
             }
-            return;
         }
         final QuestData data = quester.getQuestData(quest);
         final IStage stage = quester.getCurrentStage(quest);
@@ -1120,7 +1121,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + "- " + Lang.get(quester.getPlayer(), "break");
+                    if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "break");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1142,7 +1143,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + "- " + Lang.get(quester.getPlayer(), "damage");
+                    if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "damage");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1164,7 +1165,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksPlaced) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + "- " + Lang.get(quester.getPlayer(), "place");
+                    if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "place");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1186,7 +1187,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksUsed) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + "- " + Lang.get(quester.getPlayer(), "use");
+                    if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "use");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1208,7 +1209,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             for (final ItemStack e2 : data.blocksCut) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + "- " + Lang.get(quester.getPlayer(), "cut");
+                    if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "cut");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1234,7 +1235,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = crafted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "craftItem");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "craftItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + crafted + "/" + is.getAmount());
             } else {
@@ -1260,7 +1261,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = smelted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "smeltItem");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "smeltItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + smelted + "/" + is.getAmount());
             } else {
@@ -1286,7 +1287,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = enchanted < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "enchItem");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "enchItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + enchanted + "/" + is.getAmount());
             } else {
@@ -1329,7 +1330,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = brewed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "brewItem");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "brewItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + brewed + "/" + is.getAmount());
             } else {
@@ -1361,7 +1362,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int amt = is.getAmount();
             final ChatColor color = consumed < amt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "consumeItem");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "consumeItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + consumed + "/" + is.getAmount());
             } else {
@@ -1394,7 +1395,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             final int toDeliver = is.getAmount();
             final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "deliver")
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "deliver")
                     .replace("<npc>", depends.getNPCName(npc));
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
@@ -1420,7 +1421,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 interacted = data.npcsInteracted.get(interactIndex);
             }
             final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "talkTo")
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "talkTo")
                     .replace("<npc>", depends.getNPCName(uuid));
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(quester.getPlayer(), message);
@@ -1436,7 +1437,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int toNpcKill = stage.getNpcNumToKill().get(npcKillIndex);
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "kill");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "kill");
             if (message.contains("<mob>")) {
                 message = message.replace("<mob>", depends.getNPCName(uuid));
             } else {
@@ -1462,9 +1463,9 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int toMobKill = stage.getMobNumToKill().get(mobKillIndex);
             final ChatColor color = mobKilled < toMobKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- ";
+            if (!isOverriden) message = color + "- ";
             if (stage.getLocationsToKillWithin().isEmpty()) {
-                message += Lang.get(quester.getPlayer(), "kill");
+                if (!isOverriden) message += Lang.get(quester.getPlayer(), "kill");
                 if (message.contains("<count>")) {
                     message = message.replace("<count>", "" + color + mobKilled + "/" + toMobKill);
                 } else {
@@ -1497,7 +1498,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 tamed = data.mobsTamed.get(tameIndex);
             }
             final ChatColor color = tamed < toTame ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "tame");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "tame");
             if (!message.contains("<mob>")) {
                 message += " <mob>";
             }
@@ -1517,7 +1518,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         if (stage.getFishToCatch() != null) {
             final ChatColor color = data.getFishCaught() < stage.getFishToCatch() ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "catchFish");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "catchFish");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.getFishToCatch());
             } else {
@@ -1531,7 +1532,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         }
         if (stage.getCowsToMilk() != null) {
             final ChatColor color = data.getCowsMilked() < stage.getCowsToMilk() ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "milkCow");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "milkCow");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.getCowsToMilk());
             } else {
@@ -1550,7 +1551,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 sheared = data.sheepSheared.get(shearIndex);
             }
             final ChatColor color = sheared < toShear ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "shearSheep");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "shearSheep");
             message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(stage.getSheepToShear()
                     .get(shearIndex)));
             if (message.contains("<count>")) {
@@ -1565,7 +1566,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         if (stage.getPlayersToKill() != null) {
             final ChatColor color = data.getPlayersKilled() < stage.getPlayersToKill() ? ChatColor.GREEN
                     : ChatColor.GRAY;
-            String message = color + "- " + Lang.get(quester.getPlayer(), "killPlayer");
+            if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "killPlayer");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/"
                         + stage.getPlayersToKill());
@@ -1581,7 +1582,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
         for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
             if (i < data.locationsReached.size()) {
                 final ChatColor color = !data.locationsReached.get(i) ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + "- " + Lang.get(quester.getPlayer(), "goTo");
+                if (!isOverriden) message = color + "- " + Lang.get(quester.getPlayer(), "goTo");
                 message = message.replace("<location>", stage.getLocationNames().get(i));
                 quester.sendMessage(message);
             }
@@ -1593,8 +1594,8 @@ public class Quests extends JavaPlugin implements QuestsAPI {
                 said = data.passwordsSaid.get(passIndex);
             }
             final ChatColor color = !said ? ChatColor.GREEN : ChatColor.GRAY;
-            final String message = color + "- " + s;
-            quester.sendMessage(message);
+            final String msg = color + "- " + s;
+            quester.sendMessage(msg);
             passIndex++;
         }
         int customIndex = 0;
@@ -1605,7 +1606,7 @@ public class Quests extends JavaPlugin implements QuestsAPI {
             }
             final int toClear = stage.getCustomObjectiveCounts().get(customIndex);
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "- " + co.getDisplay();
+            if (!isOverriden) message = color + "- " + co.getDisplay();
             for (final Entry<String,Object> prompt : co.getData()) {
                 final String replacement = "%" + prompt.getKey() + "%";
                 try {

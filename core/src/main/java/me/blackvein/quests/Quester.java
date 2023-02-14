@@ -1142,16 +1142,18 @@ public class Quester implements IQuester {
             return new LinkedList<>();
         }
         final IDependencies depends = plugin.getDependencies();
+        String message = "";
+        boolean isOverriden = false;
         if (!ignoreOverrides && !getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
+            isOverriden = true;
             final LinkedList<String> objectives = new LinkedList<>();
             for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
-                String message = ChatColor.GREEN + ConfigUtil.parseString(s, quest, getPlayer());
+                message = ChatColor.GREEN + ConfigUtil.parseString(s, quest, getPlayer());
                 if (depends.getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
                 }
                 objectives.add(message);
             }
-            return objectives;
         }
         final QuestData data = getQuestData(quest);
         final IStage stage = getCurrentStage(quest);
@@ -1160,7 +1162,7 @@ public class Quester implements IQuester {
             for (final ItemStack e2 : data.blocksBroken) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(getPlayer(), "break");
+                    if (!isOverriden) message = color + Lang.get(getPlayer(), "break");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1178,7 +1180,7 @@ public class Quester implements IQuester {
             for (final ItemStack e2 : data.blocksDamaged) {
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                    String message = color + Lang.get(getPlayer(), "damage");
+                    if (!isOverriden) message = color + Lang.get(getPlayer(), "damage");
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
                     } else {
@@ -1195,7 +1197,7 @@ public class Quester implements IQuester {
         for (final ItemStack e : stage.getBlocksToPlace()) {
             for (final ItemStack e2 : data.blocksPlaced) {
                 final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + Lang.get(getPlayer(), "place");
+                if (!isOverriden) message = color + Lang.get(getPlayer(), "place");
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1213,7 +1215,7 @@ public class Quester implements IQuester {
         for (final ItemStack e : stage.getBlocksToUse()) {
             for (final ItemStack e2 : data.blocksUsed) {
                 final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + Lang.get(getPlayer(), "use");
+                if (!isOverriden) message = color + Lang.get(getPlayer(), "use");
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1231,7 +1233,7 @@ public class Quester implements IQuester {
         for (final ItemStack e : stage.getBlocksToCut()) {
             for (final ItemStack e2 : data.blocksCut) {
                 final ChatColor color = e2.getAmount() < e.getAmount() ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + Lang.get(getPlayer(), "cut");
+                if (!isOverriden) message = color + Lang.get(getPlayer(), "cut");
                 if (e2.getType().equals(e.getType()) && e2.getDurability() == e.getDurability()) {
                     if (message.contains("<count>")) {
                         message = message.replace("<count>", "" + color + e2.getAmount() + "/" + e.getAmount());
@@ -1254,7 +1256,7 @@ public class Quester implements IQuester {
             }
             final int toCraft = is.getAmount();
             final ChatColor color = crafted < toCraft ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "craftItem");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "craftItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + crafted + "/" + toCraft);
             } else {
@@ -1275,7 +1277,7 @@ public class Quester implements IQuester {
             }
             final int toSmelt = is.getAmount();
             final ChatColor color = smelted < toSmelt ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "smeltItem");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "smeltItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + smelted + "/" + toSmelt);
             } else {
@@ -1296,7 +1298,7 @@ public class Quester implements IQuester {
             }
             final int toEnchant = is.getAmount();
             final ChatColor color = enchanted < toEnchant ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "enchItem");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "enchItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + enchanted + "/" + toEnchant);
             } else {
@@ -1328,7 +1330,7 @@ public class Quester implements IQuester {
             }
             final int toBrew = is.getAmount();
             final ChatColor color = brewed < toBrew ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "brewItem");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "brewItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + brewed + "/" + toBrew);
             } else {
@@ -1349,7 +1351,7 @@ public class Quester implements IQuester {
             }
             final int toConsume = is.getAmount();
             final ChatColor color = consumed < toConsume ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "consumeItem");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "consumeItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + consumed + "/" + toConsume);
             } else {
@@ -1371,7 +1373,7 @@ public class Quester implements IQuester {
             final int toDeliver = is.getAmount();
             final UUID npc = stage.getItemDeliveryTargets().get(deliverIndex);
             final ChatColor color = delivered < toDeliver ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "deliver").replace("<npc>", depends.getNPCName(npc));
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + delivered + "/" + toDeliver);
             } else {
@@ -1391,7 +1393,7 @@ public class Quester implements IQuester {
                 interacted = data.npcsInteracted.get(interactIndex);
             }
             final ChatColor color = !interacted ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "talkTo")
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "talkTo")
                     .replace("<npc>", depends.getNPCName(n));
             if (depends.getPlaceholderApi() != null) {
                 message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
@@ -1407,7 +1409,7 @@ public class Quester implements IQuester {
             }
             final int toNpcKill = stage.getNpcNumToKill().get(npcKillIndex);
             final ChatColor color = npcKilled < toNpcKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "kill");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "kill");
             if (message.contains("<mob>")) {
                 message = message.replace("<mob>", depends.getNPCName(n));
             } else {
@@ -1433,7 +1435,7 @@ public class Quester implements IQuester {
             }
             final int toMobKill = stage.getMobNumToKill().get(mobKillIndex);
             final ChatColor color = mobKilled < toMobKill ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + "";
+            if (!isOverriden) message = color + "";
             if (stage.getLocationsToKillWithin().isEmpty()) {
                 message += Lang.get(getPlayer(), "kill");
                 if (message.contains("<count>")) {
@@ -1464,7 +1466,7 @@ public class Quester implements IQuester {
                 tamed = data.mobsTamed.get(tameIndex);
             }
             final ChatColor color = tamed < toTame ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "tame");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "tame");
             if (!message.contains("<mob>")) {
                 message += " <mob>";
             }
@@ -1479,7 +1481,7 @@ public class Quester implements IQuester {
         }
         if (stage.getFishToCatch() != null) {
             final ChatColor color = data.getFishCaught() < stage.getFishToCatch() ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "catchFish");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "catchFish");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + data.getFishCaught() + "/" + stage.getFishToCatch());
             } else {
@@ -1493,7 +1495,7 @@ public class Quester implements IQuester {
         }
         if (stage.getCowsToMilk() != null) {
             final ChatColor color = data.getCowsMilked() < stage.getCowsToMilk() ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "milkCow");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "milkCow");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + data.getCowsMilked() + "/" + stage.getCowsToMilk());
             } else {
@@ -1512,7 +1514,7 @@ public class Quester implements IQuester {
                 sheared = data.sheepSheared.get(shearIndex);
             }
             final ChatColor color = sheared < toShear ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "shearSheep");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "shearSheep");
             message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(stage.getSheepToShear()
                     .get(shearIndex)));
             if (message.contains("<count>")) {
@@ -1527,7 +1529,7 @@ public class Quester implements IQuester {
         if (stage.getPlayersToKill() != null) {
             final ChatColor color = data.getPlayersKilled() < stage.getPlayersToKill() ? ChatColor.GREEN
                     : ChatColor.GRAY;
-            String message = color + Lang.get(getPlayer(), "killPlayer");
+            if (!isOverriden) message = color + Lang.get(getPlayer(), "killPlayer");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + color + data.getPlayersKilled() + "/"
                         + stage.getPlayersToKill());
@@ -1543,7 +1545,7 @@ public class Quester implements IQuester {
         for (int i = 0 ; i < stage.getLocationsToReach().size(); i++) {
             if (i < data.locationsReached.size()) {
                 final ChatColor color = !data.locationsReached.get(i) ? ChatColor.GREEN : ChatColor.GRAY;
-                String message = color + Lang.get(getPlayer(), "goTo");
+                if (!isOverriden) message = color + Lang.get(getPlayer(), "goTo");
                 message = message.replace("<location>", stage.getLocationNames().get(i));
                 objectives.add(message);
             }
@@ -1566,7 +1568,7 @@ public class Quester implements IQuester {
             }
             final int toClear = stage.getCustomObjectiveCounts().get(customIndex);
             final ChatColor color = cleared < toClear ? ChatColor.GREEN : ChatColor.GRAY;
-            String message = color + co.getDisplay();
+            if (!isOverriden) message = color + co.getDisplay();
             for (final Entry<String,Object> prompt : co.getData()) {
                 final String replacement = "%" + prompt.getKey() + "%";
                 try {
@@ -3670,17 +3672,20 @@ public class Quester implements IQuester {
                 : new ItemStack(Material.AIR, objective.getProgress());
         final ItemStack goal = objective.getGoalObject() instanceof ItemStack ? (ItemStack) objective.getGoalObject()
                 : new ItemStack(Material.AIR, objective.getGoal());
+        boolean isOverriden = false;
+        String message = "";
         if (!getCurrentStage(quest).getObjectiveOverrides().isEmpty()) {
+            isOverriden = true;
             for (final String s: getCurrentStage(quest).getObjectiveOverrides()) {
-                String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " 
+                message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") "
                         + ConfigUtil.parseString(ChatColor.translateAlternateColorCodes('&', s), quest, p);
                 if (plugin.getDependencies().getPlaceholderApi() != null) {
                     message = PlaceholderAPI.setPlaceholders(p, message);
                 }
-                sendMessage(message);
             }
-        } else if (type.equals(ObjectiveType.BREAK_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break");
+        }
+        if (type.equals(ObjectiveType.BREAK_BLOCK)) {
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "break");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3697,7 +3702,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "damage");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3714,7 +3719,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "place");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3731,7 +3736,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.USE_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "use");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3748,7 +3753,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<item>", ItemUtil.getName(increment)));
             }
         } else if (type.equals(ObjectiveType.CUT_BLOCK)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "cut");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3767,7 +3772,7 @@ public class Quester implements IQuester {
         } else if (type.equals(ObjectiveType.CRAFT_ITEM)) {
             final ItemStack is = getCurrentStage(quest).getItemsToCraft().get(getCurrentStage(quest).getItemsToCraft()
                     .indexOf(goal));
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craftItem");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "craftItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
             } else {
@@ -3785,7 +3790,7 @@ public class Quester implements IQuester {
         } else if (type.equals(ObjectiveType.SMELT_ITEM)) {
             final ItemStack is = getCurrentStage(quest).getItemsToSmelt().get(getCurrentStage(quest).getItemsToSmelt()
                     .indexOf(goal));
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smeltItem");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "smeltItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
             } else {
@@ -3803,7 +3808,7 @@ public class Quester implements IQuester {
         } else if (type.equals(ObjectiveType.ENCHANT_ITEM)) {
             final ItemStack is = getCurrentStage(quest).getItemsToEnchant().get(getCurrentStage(quest)
                     .getItemsToEnchant().indexOf(goal));
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "enchItem");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "enchItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
             } else {
@@ -3841,7 +3846,7 @@ public class Quester implements IQuester {
         } else if (type.equals(ObjectiveType.BREW_ITEM)) {
             final ItemStack is = getCurrentStage(quest).getItemsToBrew().get(getCurrentStage(quest).getItemsToBrew()
                     .indexOf(goal));
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brewItem");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "brewItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
             } else {
@@ -3867,7 +3872,7 @@ public class Quester implements IQuester {
         } else if (type.equals(ObjectiveType.CONSUME_ITEM)) {
             final ItemStack is = getCurrentStage(quest).getItemsToConsume().get(getCurrentStage(quest)
                     .getItemsToConsume().indexOf(goal));
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consumeItem");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "consumeItem");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + is.getAmount() + "/" + is.getAmount());
             } else {
@@ -3885,7 +3890,7 @@ public class Quester implements IQuester {
         } else if (type.equals(ObjectiveType.DELIVER_ITEM)) {
             final ItemStack is = getCurrentStage(quest).getItemsToDeliver().get(getCurrentStage(quest)
                     .getItemsToDeliver().indexOf(goal));
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "deliver")
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "deliver")
                     .replace("<npc>", plugin.getDependencies().getNPCName(getCurrentStage(quest)
                     .getItemDeliveryTargets().get(getCurrentStage(quest).getItemsToDeliver().indexOf(goal))));
             if (message.contains("<count>")) {
@@ -3903,7 +3908,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<item>", ItemUtil.getName(is)));
             }
         } else if (type.equals(ObjectiveType.MILK_COW)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "milkCow");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "milkCow");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3912,7 +3917,7 @@ public class Quester implements IQuester {
             }
             sendMessage(message);
         } else if (type.equals(ObjectiveType.CATCH_FISH)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "catchFish");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3921,7 +3926,7 @@ public class Quester implements IQuester {
             }
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_MOB)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3937,7 +3942,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<mob>", MiscUtil.snakeCaseToUpperCamelCase(mob.name())));
             }
         } else if (type.equals(ObjectiveType.KILL_PLAYER)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "killPlayer");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "killPlayer");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3946,11 +3951,11 @@ public class Quester implements IQuester {
             }
             sendMessage(message);
         } else if (type.equals(ObjectiveType.TALK_TO_NPC)) {
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "talkTo")
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "talkTo")
                     .replace("<npc>", plugin.getDependencies().getNPCName(npc));
             sendMessage(message);
         } else if (type.equals(ObjectiveType.KILL_NPC)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "kill");
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
             } else {
@@ -3960,7 +3965,7 @@ public class Quester implements IQuester {
             }
             sendMessage(message.replace("<mob>", plugin.getDependencies().getNPCName(npc)));
         } else if (type.equals(ObjectiveType.TAME_MOB)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "tame");
             if (!message.contains("<mob>")) {
                 message += " <mob>";
             }
@@ -3978,7 +3983,7 @@ public class Quester implements IQuester {
                 sendMessage(message.replace("<mob>", MiscUtil.snakeCaseToUpperCamelCase(mob.name())));
             }
         } else if (type.equals(ObjectiveType.SHEAR_SHEEP)) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "shearSheep");
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + Lang.get(p, "shearSheep");
             message = message.replace("<color>", MiscUtil.getPrettyDyeColorName(color));
             if (message.contains("<count>")) {
                 message = message.replace("<count>", "" + ChatColor.GREEN + goal.getAmount() + "/" + goal.getAmount());
@@ -3997,12 +4002,12 @@ public class Quester implements IQuester {
                         + quest.getId() + ", please report on Github");
                 obj = obj.replace("<location>", "ERROR");
             }
-            final String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + obj;
             sendMessage(message);
         } else if (type.equals(ObjectiveType.PASSWORD)) {
             sendMessage(ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + pass);
         } else if (co != null) {
-            String message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + co.getDisplay();
+            if (!isOverriden) message = ChatColor.GREEN + "(" + Lang.get(p, "completed") + ") " + co.getDisplay();
             int index = -1;
             for (int i = 0; i < getCurrentStage(quest).getCustomObjectives().size(); i++) {
                 if (getCurrentStage(quest).getCustomObjectives().get(i).getName().equals(co.getName())) {
